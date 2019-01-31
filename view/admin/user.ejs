@@ -23,7 +23,6 @@
         © layui.com - 底部固定区域
     </div>
 </div>
-<script src="../src/layui.js"></script>
 <script>
     //JavaScript代码区域
     layui.use(['element','table'], function(){
@@ -51,16 +50,23 @@
         table.on('tool(demo)', (obj)=>{
             //console.log(obj);
              if(obj.event === 'del'){
-                 layui.$.ajax({
-                     url:'/admin/user/del',
-                     method:'post',
-                     data:{
-                         _id:obj.data._id
-                     },
-                     success(res){
-                         // res.code == 0 && layer.tips(res.data,obj.othis);
-                     }
-                 })
+                 layer.confirm('是否确认删除', {icon: 3, title:'提示'}, function(index){
+                     //do something
+                     layui.$.ajax({
+                         url:'/admin/user/del',
+                         method:'post',
+                         data:{
+                             _id:obj.data._id
+                         },
+                         success(res){
+                             //obj.del()//直接刷新
+                             location.reload();//手动刷新
+                             // res.code == 0 && layer.tips(res.data,obj.othis);
+                         }
+                     })
+                     layer.close(index);
+                 });
+
              }else if(obj.event === 'edit'){
                  layer.prompt(function(value, index, elem){
                      //alert(value); //得到value

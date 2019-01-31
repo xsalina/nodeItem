@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
 
     },
     //普通用户 1  管理员10     超级管理员 999
-    level:{type:Number,required:true,default:1}
+    level:{type:Number,required:true,default:80}
 });
 
 
@@ -40,10 +40,19 @@ const taskSchema = new mongoose.Schema({
     receiver:{type:[ {type:mongoose.Schema.Types.ObjectId,ref:'user'} ]},
 
     //发布时间
-    times:{type:String},
+    time:{type:String,default: new Date()},
 
     //接取人数限制
-    num:{type:Number}
+    num:{type:Number},
+
+    //奖励
+    reward:{type:String},
+
+    //难度
+    difficulty:{type:String},
+
+    //截止日期
+    expiration:{type:String}
 
 })
 

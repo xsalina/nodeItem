@@ -10,8 +10,10 @@
                 <legend>任务管理</legend>
             </fieldset>
 
-            <table id="demo" lay-filter="test"></table>
-
+            <table id="demo" lay-filter="demo"></table>
+            <script type="text/html" id="barDemo">
+                <a  class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" >删除任务</a>
+            </script>
         </div>
     </div>
 
@@ -33,16 +35,30 @@
                 [
                     {field:'title',title:'标题'},
                     {field:'author',title:'作者',templet: (d) => {
+                            // console.log(d);
                             return d.author.username
                         }},
                     {field:'time',title:'发布时间',templet: (d) => {
                             return new Date(d.time).toLocaleString()
                         }},
+                    {toolbar:'#barDemo'}
                 ]
             ]
         })
 
-
+        table.on('tool(demo)', (obj) => {
+            layer.confirm('是否删除?', {icon: 3, title:'提示'}, function(index){
+                //do something
+                layui.$.ajax({
+                    url:'/admin/task/del',
+                    method:'post',
+                    data:{
+                        _id:obj.data._id
+                    }
+                })
+                layer.close(index);
+            });
+        })
     });
 </script>
 

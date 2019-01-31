@@ -36,6 +36,7 @@ app.set('view engine','ejs');
 
 
 app.use('/',require('./router/index.js'));
+app.use('/api',require('./router/api.js'));
 app.use('/admin',require('./router/admin.js'));
 
 

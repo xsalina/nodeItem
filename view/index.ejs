@@ -9,7 +9,7 @@
             <% if(login){ %>
                 <li class="layui-nav-item">当前用户:<%- user.username %></li>
                 <% if(user.level >= 10){ %>
-                    <li class="layui-nav-item"><a href="/admin">后台管理</a></li>
+                    <li class="layui-nav-item"><a href="/admin/task/add">后台管理</a></li>
                 <% } %>
 
                 <li class="layui-nav-item"><a href="/logout">退出</a></li>

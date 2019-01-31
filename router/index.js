@@ -9,13 +9,17 @@ const express = require('express'),
 router.get('/', (req, res) => {
     res.render('index',{
         login:req.session.login,
-        user:req.session.user
+        user:req.session.user,
+        title:'首页'
     })
 });
 
 //注册
 router.get('/reg', (req, res) => {
-    res.render('reg')
+    res.render('reg',{
+        // login:req.session.login,
+        title:'注册'
+    })
 }).post('/reg', (req, res) => {
     //console.log(req.body)
     user.findOne({username:req.body.username})
@@ -45,7 +49,10 @@ router.get('/reg', (req, res) => {
 //登录
 router.get('/login', (req, res) => {
     //console.log(req.session.login);
-    res.render('login',{login:req.session.login});
+    res.render('login',{
+        login:req.session.login,
+        title:'登录'
+    });
 }).post('/login', (req, res) => {
     //判断用户名存不存在
     user.findOne({username:req.body.username}, function(err, data){
