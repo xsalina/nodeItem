@@ -1,0 +1,108 @@
+<% include ../common/header.ejs %>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <% include nav.ejs %>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                <legend>用户管理</legend>
+            </fieldset>
+            <table class="layui-hide" lay-filter="demo" id="test"></table>
+
+            <script type="text/html" id="barDemo">
+                <a  class="layui-btn layui-btn-xs" lay-event="edit" >更改级别</a>
+                <a  class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" >删除用户</a>
+            </script>
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © layui.com - 底部固定区域
+    </div>
+</div>
+<script src="../src/layui.js"></script>
+<script>
+    //JavaScript代码区域
+    layui.use(['element','table'], function(){
+        var element = layui.element;
+        var table = layui.table;
+        var form = layui.form;
+
+        table.render({
+            elem: '#test'
+            ,url:'/admin/user'
+            ,method:'post'
+            ,cols: [[
+
+                {field:'username', width:100, title: '用户名'},
+                {field:'level', width:100, title: '级别'},
+                {field:'used',title: '账号是否可用',templet:(d)=>{
+                        //console.log(d);//每一行的数据
+                        return `<input type="checkbox" name="used" value="${d._id}" lay-skin="switch"  lay-text="可用|不可用" lay-filter="usedDemo" ${d.used === true ? 'checked':''} >`
+                }},
+                {field:'tool',toolbar:'#barDemo'}
+            ]]
+            ,page:true
+        });
+        //监听表格为demo 工具条
+        table.on('tool(demo)', (obj)=>{
+            //console.log(obj);
+             if(obj.event === 'del'){
+                 layui.$.ajax({
+                     url:'/admin/user/del',
+                     method:'post',
+                     data:{
+                         _id:obj.data._id
+                     },
+                     success(res){
+                         // res.code == 0 && layer.tips(res.data,obj.othis);
+                     }
+                 })
+             }else if(obj.event === 'edit'){
+                 layer.prompt(function(value, index, elem){
+                     //alert(value); //得到value
+                     layui.$.ajax({
+                         url:'/admin/user/relevel',
+                         method:'post',
+                         data:{
+                             _id:obj.data._id,
+                             level:value
+                         },
+                         success(res){
+                             // res.code == 0 && layer.tips(res.data,obj.othis);
+                         }
+                     })
+                     layer.close(index);
+                 });
+
+             }
+        });
+        form.on('switch(usedDemo)', function(obj){
+            //console.log(this.value,obj.elem.checked)
+            layui.$.ajax({
+                url:'/admin/user/reuserlevel',
+                method:'post',
+                data:{
+                    user_id:this.value,
+                    used:obj.elem.checked
+                },
+                success(res){
+                    res.code == 0 && layer.tips(res.data,obj.othis);
+                    res.code == 1 && layer.alert(res.data, () => {
+                        window.location.reload()
+                    })
+                }
+            })
+        });
+
+    });
+
+
+
+
+</script>
+</body>
+</html>
