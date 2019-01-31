@@ -1,0 +1,50 @@
+<% include ../common/header.ejs %>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <% include nav.ejs %>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                <legend>任务管理</legend>
+            </fieldset>
+
+            <table id="demo" lay-filter="test"></table>
+
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © layui.com - 底部固定区域
+    </div>
+</div>
+<script>
+    //JavaScript代码区域
+    layui.use(['element','table'], function() {
+        var table = layui.table;
+
+        table.render({
+            elem:'#demo',
+            url:'/admin/task/all',
+            method:'post',
+            cols:[
+                [
+                    {field:'title',title:'标题'},
+                    {field:'author',title:'作者',templet: (d) => {
+                            return d.author.username
+                        }},
+                    {field:'time',title:'发布时间',templet: (d) => {
+                            return new Date(d.time).toLocaleString()
+                        }},
+                ]
+            ]
+        })
+
+
+    });
+</script>
+
+</body>
+</html>
