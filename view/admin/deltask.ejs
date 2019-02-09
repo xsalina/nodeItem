@@ -47,13 +47,15 @@
         })
 
         table.on('tool(demo)', (obj) => {
+            //console.log(obj.data.author._id);
             layer.confirm('是否删除?', {icon: 3, title:'提示'}, function(index){
                 //do something
                 layui.$.ajax({
                     url:'/admin/task/del',
                     method:'post',
                     data:{
-                        _id:obj.data._id
+                        _id:obj.data._id,
+                        user_id:obj.data.author._id
                     }
                 })
                 layer.close(index);

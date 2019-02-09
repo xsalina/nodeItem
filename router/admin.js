@@ -87,19 +87,16 @@ router.post('/user/del', (req, res) => {
             ]).then()
         }
     })
-
-
-
-
 })
 //更改级别
 router.post('/user/relevel', (req, res) => {
     user.findOne({_id:req.body._id}, (err, data) => {
+        //console.log(data);
         //只能改比自己等级低的而且改过之后等级不能超过自己
-        if(data.level < req.session.user.level && req.body.level < req.session.user.level){
+        const userlevel = req.session.user.level;
+        if(data.level < userlevel && req.body.level < userlevel){
             user.updateOne({_id:req.body._id},{$set:{level:req.body.level}},(err,data) => {
                 if(err) res.send('数据库错误')
-
             })
         }
     })
@@ -142,19 +139,21 @@ router.post('/task/all', (req, res) => {
     })
 })
 
-//删除任务
+//删除任务 只能删除比自己小的等级包括自己
 router.post('/task/del', (req, res) => {
-    Promise.all([
-        task.deleteOne({_id:req.body._id}),
-        //如果用户发布任务的数组中  有当前删除的任务   当前任务从数组删除
-        user.updateMany(
-            {$or:[{'task.publish':req.body._id,'task.receive':req.body._id,'task.accomplish':req.body._id}]},
-            {$pull:{'task.publish':req.body._id,'task.receive':req.body._id,'task.accomplish':req.body._id}}
-        )
-    ]).then(() => {
-
+    user.findOne({_id:req.body.user_id}, (err, data) => {
+            const userlevel = req.session.user.level;
+            if(data.level < userlevel || (data._id == req.session.user._id)){
+                    Promise.all([
+                        task.deleteOne({_id:req.body._id}),
+                        //如果用户发布任务的数组中  有当前删除的任务   当前任务从数组删除
+                        user.updateMany(
+                            {$or:[{'task.publish':req.body._id,'task.receive':req.body._id,'task.accomplish':req.body._id}]},
+                            {$pull:{'task.publish':req.body._id,'task.receive':req.body._id,'task.accomplish':req.body._id}}
+                        )
+                    ]).then(() => {})
+            }
     })
-
 })
 
 module.exports = router

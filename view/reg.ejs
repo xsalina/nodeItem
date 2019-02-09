@@ -1,4 +1,17 @@
 <%include common/header.ejs %>
+<style>
+    a.ftcolor{
+        padding-top:32px;
+        padding-left:32px;
+    }
+    a.ftcolor i{
+        font-style: normal;
+    }
+    a.ftcolor strong{
+        font-weight: normal;
+        color:orange;
+    }
+</style>
 <body>
 <form class="layui-form" action="">
     <div class="layui-form-item">
@@ -23,7 +36,18 @@
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
         </div>
     </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <a class="ftcolor" href="/login">
+                <i>已有账号?<i/>
+                <strong>前去登录</strong>
+            </a>
+
+        </div>
+    </div>
+
 </form>
+
 
 <script>
     //Demo

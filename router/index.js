@@ -1,5 +1,5 @@
 const express = require('express'),
-    {user} = require('../model/sch.js'),
+    {user,task} = require('../model/sch.js'),
     crypto = require('crypto'),
     router = express.Router();
 
@@ -64,7 +64,7 @@ router.get('/login', (req, res) => {
             //加密
             const password = c.update(req.body.password).digest('hex');
             if(data.password === password){
-                console.log(data);
+                //console.log(data);
                 req.session.login = true;
                 req.session.user = data;
                 return res.send({
@@ -92,5 +92,34 @@ router.get('/logout', (req, res) => {
 // }, (req, res) => {
 //
 // })
+router.get('/detail/:id', (req, res) => {
+
+    task.findOne({_id:req.params.id}).populate('author receiver').exec((err,data) => {
+        const people = data.receiver.findIndex((val) => {
+            //返回-1就是没有接取过
+            //console.log(String(val._id) === req.session.user._id)
+            return String(val._id) === req.session.user && req.session.user._id
+        });
+        //console.log(people);
+        res.render('detail',{
+            title:'详情页 - '+ data.title,
+            user:req.session.user,
+            login:req.session.login,
+            data:data,
+            people
+        })
+    })
+});
+router.post('/detail/:id', (req, res) => {
+    
+    user.findOne({_id:req.session.user._id}, (err, data) => {
+        //console.log(req.params.id);
+        Promise.all([
+            task.updateOne({_id:req.params.id},{$push:{receiver:req.session.user._id}}),
+            user.updateOne({_id:req.session.user._id},{$push:{'task.receive':req.params.id}})
+        ])
+    })
+
+})
 
 module.exports = router;

@@ -1,0 +1,60 @@
+<% include common/header.ejs %>
+<% include common/index.ejs %>
+
+<div class="layui-main">
+    <h1><%- data.title %></h1>
+
+    <div class="layui-text layui-row">
+        <div class="layui-col-mdl">发布人: <%- data.author.username %></div>
+        <div>发布时间: <%- new Date(data.time).toLocaleString() %></div>
+    </div>
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>任务详情</legend>
+    </fieldset>
+    <div>
+        <%- data.content %>
+    </div>
+    <div>
+        已接取人数：<%- data.receiver.length  %>人
+        最高接取人数：<% data.num %>人
+        任务时限：<%- data.expiration  %>之前
+        任务难度：<div id="expiration"></div>
+    </div>
+    <div>
+        <% if(data.can || !(people === -1)){ %>
+            <button class="layui-btn layui-btn-normal layui-btn-disabled">不能接取</button>
+        <% }else{ %>
+                <button id="oncereceiver" class="layui-btn layui-btn-normal ">立即接取</button>
+        <% } %>
+    </div>
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>接取人</legend>
+    </fieldset>
+    <div>
+        <% for(var i = 0; i < data.receiver.length; i++){ %>
+        <%- `${i + 1}. ${data.receiver[i].username}` %>
+        <% } %>
+    </div>
+</div>
+<script>
+    layui.use(['rate'], () => {
+        var rate = layui.rate;
+        rate.render({
+            elem:'#expiration',
+            value:<%- data.difficulty %>,
+            readonly:true
+        })
+        //console.log(location.pathname);
+        layui.$('#oncereceiver').on('click', () => {
+            //console.log(1);
+            layui.$.ajax({
+                    url:location.pathname,
+                    method:'post'
+                })
+
+
+        })
+    })
+</script>
+</body>
+</html>

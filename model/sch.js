@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
 
     },
     //普通用户 1  管理员10     超级管理员 999
-    level:{type:Number,required:true,default:80}
+    level:{type:Number,required:true,default:12}
 });
 
 
@@ -52,7 +52,10 @@ const taskSchema = new mongoose.Schema({
     difficulty:{type:String},
 
     //截止日期
-    expiration:{type:String}
+    expiration:{type:String},
+
+    //任务是否已经完成
+    can:{type:Boolean,default:false}
 
 })
 

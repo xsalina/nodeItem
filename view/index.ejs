@@ -1,25 +1,158 @@
 <% include common/header.ejs %>
+<style>
+    .lineheight28{
+        line-height:28px !important;
+    }
+</style>
 <body>
-<div class="layui-bg-blue">
-    <div class="layui-header layui-main">
-        <ul class="layui-nav layui-bg-blue">
-            <li class="layui-nav-item layui-this"><a href="/">任务大厅</a></li>
-        </ul>
-        <ul class="layui-nav layui-bg-blue layui-layout-right">
-            <% if(login){ %>
-                <li class="layui-nav-item">当前用户:<%- user.username %></li>
-                <% if(user.level >= 10){ %>
-                    <li class="layui-nav-item"><a href="/admin/task/add">后台管理</a></li>
-                <% } %>
+<% include common/index.ejs %>
 
-                <li class="layui-nav-item"><a href="/logout">退出</a></li>
-            <% } else { %>
-                <li class="layui-nav-item"><a href="/login">登录</a></li>
-                <li class="layui-nav-item"><a href="/reg">注册</a></li>
+<div id="btns" style="overflow:hidden;margin-top: 10px;">
+    <button class="layui-btn layui-btn-normal" data-method="all">全部任务</button>
+    <button class="layui-btn layui-btn-normal" data-method="can">可接取任务</button>
+    <button class="layui-btn layui-btn-normal" data-method="notcan">不可接取任务</button>
+    <div style="float:right">
+        <% if(login){ %>
+            <% if(user.level >= 10){ %>
+                <button class="layui-btn layui-btn-normal" data-method="my">我的发布</button>
             <% } %>
-
-        </ul>
+            <button class="layui-btn layui-btn-normal" data-method="receive">已经接取</button>
+            <button class="layui-btn layui-btn-normal" data-method="complete">已经完成</button>
+        <% } %>
     </div>
+
 </div>
+
+<table lay-filter="index" class="layui-hide" lay-filter="demo" id="test"></table>
+
+<script type="text/html" id="detail">
+    <a  class="layui-btn layui-btn-normal lineheight28" lay-event="detail">查看详情</a>
+</script>
 </body>
+<script>
+    //JavaScript代码区域
+    layui.use(['element','table','util'], function(){
+        var element = layui.element;
+        var table = layui.table;
+        var util = layui.util;
+        var $ = layui.$
+        table.render({
+            elem: '#test'
+            ,url:'/api/task/all'
+            ,method:'post'
+            ,cols: [[
+
+                {field:'title',  title: '标题'},
+                {field:'time', title: '发布时间',templet(d){
+                        return util.timeAgo(d.time)
+                    }},
+                {toolbar:'#detail',},
+
+            ]]
+            ,page:true
+        });
+         table.on('tool(index)', (obj) => {
+             //console.log('/detail/'+obj.data._id);
+             location.href = '/detail/'+obj.data._id
+         })
+        var method = {
+            all(){
+                table.reload('test',{
+                    url:'/api/task/all'
+                })
+            },
+            can(){
+                table.reload('test',{
+                    url:'/api/task/can'
+                })
+            },
+            notcan(){
+                table.reload('test',{
+                    url:'/api/task/notcan'
+                })
+            },
+            my(){
+                table.reload('test',{
+                    url:'/api/task/my'
+                })
+            },
+            receive(){
+                table.reload('test',{
+                    url:'/api/task/receive'
+                })
+            },
+            complete(){
+                table.reload('test',{
+                    url:'/api/task/complete'
+                })
+            }
+
+        }
+        $('#btns .layui-btn').on('click',function(){
+            method[this.dataset.method]()
+        })
+        // //监听表格为demo 工具条
+        // table.on('tool(demo)', (obj)=>{
+        //     //console.log(obj);
+        //     if(obj.event === 'del'){
+        //         layer.confirm('是否确认删除', {icon: 3, title:'提示'}, function(index){
+        //             //do something
+        //             layui.$.ajax({
+        //                 url:'/admin/user/del',
+        //                 method:'post',
+        //                 data:{
+        //                     _id:obj.data._id
+        //                 },
+        //                 success(res){
+        //                     //obj.del()//直接刷新
+        //                     location.reload();//手动刷新
+        //                     // res.code == 0 && layer.tips(res.data,obj.othis);
+        //                 }
+        //             })
+        //             layer.close(index);
+        //         });
+        //
+        //     }else if(obj.event === 'edit'){
+        //         layer.prompt(function(value, index, elem){
+        //             //alert(value); //得到value
+        //             layui.$.ajax({
+        //                 url:'/admin/user/relevel',
+        //                 method:'post',
+        //                 data:{
+        //                     _id:obj.data._id,
+        //                     level:value
+        //                 },
+        //                 success(res){
+        //                     // res.code == 0 && layer.tips(res.data,obj.othis);
+        //                 }
+        //             })
+        //             layer.close(index);
+        //         });
+        //
+        //     }
+        // });
+        // form.on('switch(usedDemo)', function(obj){
+        //     //console.log(this.value,obj.elem.checked)
+        //     layui.$.ajax({
+        //         url:'/admin/user/reuserlevel',
+        //         method:'post',
+        //         data:{
+        //             user_id:this.value,
+        //             used:obj.elem.checked
+        //         },
+        //         success(res){
+        //             res.code == 0 && layer.tips(res.data,obj.othis);
+        //             res.code == 1 && layer.alert(res.data, () => {
+        //                 window.location.reload()
+        //             })
+        //         }
+        //     })
+        // });
+
+    });
+
+
+
+
+</script>
 </html>
