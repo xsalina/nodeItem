@@ -32,13 +32,54 @@
     </fieldset>
     <div>
         <% for(var i = 0; i < data.receiver.length; i++){ %>
-        <%- `${i + 1}. ${data.receiver[i].username}` %>
+        <%- `${i + 1}. ${data.receiver[i].user.username}` %>
         <% } %>
     </div>
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>完成详情</legend>
+    </fieldset>
+    <% for(var i = 0;i < data.receiver.length; i++){ %>
+        <div class="layui-card">
+            <div class="layui-card-header">用户名:<%- data.receiver[i].user.username %></div>
+            <% if(data.receiver[i].finmsg){ %>
+                <div class="layui-card-body"><%- data.receiver[i].msg %></div>
+            <% }else{ %>
+                <% if(user && user._id == data.receiver[i].user._id){ %>
+                    <form class="layui-form " action="">
+                        <input name="id" type="text" hidden value="<%- data.receiver[i].user._id %>" />
+                        <input type="text" name="index" hidden value="<%- i %>">
+                        <textarea name="con" id="demo<%- i %>" style="display: none;"></textarea>
+                        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">立即提交</button>                    </form>
+
+                <% } %>
+            <% } %>
+        </div>
+    <% } %>
 </div>
 <script>
-    layui.use(['rate'], () => {
+    layui.use(['rate','layedit','form'], () => {
         var rate = layui.rate;
+        var layedit = layui.layedit;
+        var form = layui.form;
+        var edit = {};
+
+        <% for(var i = 0; i < data.receiver.length; i++){ %>
+
+       edit.index<%- i %> = layedit.build('demo<%- i %>'); //建立编辑器
+        <% } %>
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            var da = data.field;
+            da.con = layedit.getContent(edit['index' +data.field.index]);
+            da.taskid = location.pathname;
+            layui.$.ajax({
+                url:'/task/finmsg',
+                method:'post',
+                data:da
+            })
+            return false;
+        });
         rate.render({
             elem:'#expiration',
             value:<%- data.difficulty %>,

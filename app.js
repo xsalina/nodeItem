@@ -45,6 +45,6 @@ app.use('/admin',require('./router/admin.js'));
 
 
 
-app.listen(233, () => {
-    console.log("监听233端口成功")
+app.listen(80,() => {
+    console.log("监听80端口成功")
 })

@@ -37,7 +37,11 @@ const taskSchema = new mongoose.Schema({
     author:{type:mongoose.Schema.Types.ObjectId,ref:'user'},
 
     //接取人
-    receiver:{type:[ {type:mongoose.Schema.Types.ObjectId,ref:'user'} ]},
+    receiver:{type:[ {
+            user:{type:mongoose.Schema.Types.ObjectId,ref:'user'},
+            msg:{type:String},
+            finmsg:{type:Boolean,default:false}
+    }]},
 
     //发布时间
     time:{type:String,default: new Date()},
@@ -55,7 +59,8 @@ const taskSchema = new mongoose.Schema({
     expiration:{type:String},
 
     //任务是否已经完成
-    can:{type:Boolean,default:false}
+    can:{type:Boolean,default:false},
+
 
 })
 

@@ -94,7 +94,8 @@ router.get('/logout', (req, res) => {
 // })
 router.get('/detail/:id', (req, res) => {
 
-    task.findOne({_id:req.params.id}).populate('author receiver').exec((err,data) => {
+    task.findOne({_id:req.params.id}).populate('author receiver.user').exec((err,data) => {
+        //console.log(data);
         const people = data.receiver.findIndex((val) => {
             //返回-1就是没有接取过
             //console.log(String(val._id) === req.session.user._id)
@@ -111,15 +112,20 @@ router.get('/detail/:id', (req, res) => {
     })
 });
 router.post('/detail/:id', (req, res) => {
-    
-    user.findOne({_id:req.session.user._id}, (err, data) => {
-        //console.log(req.params.id);
-        Promise.all([
-            task.updateOne({_id:req.params.id},{$push:{receiver:req.session.user._id}}),
-            user.updateOne({_id:req.session.user._id},{$push:{'task.receive':req.params.id}})
-        ])
-    })
-
+    //console.log(req.session.user._id)
+    //console.log(req.params.id);
+    Promise.all([
+        task.updateOne({_id:req.params.id},{$push:{receiver:{user:req.session.user._id}}}),
+        user.updateOne({_id:req.session.user._id},{$push:{'task.receive':req.params.id}})
+    ])
+});
+router.post('/task/finmsg', (req, res) => {
+    task.updateOne(
+        {_id:'jjj'},
+        {$set:{
+            ['receiver.'+req.body.index + '.msg']:req.body.con},
+            ['receiver.'+req.body.index + '.finmsg']:true
+        }).then()
 })
 
 module.exports = router;

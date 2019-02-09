@@ -82,8 +82,10 @@ router.post('/user/del', (req, res) => {
                     user.deleteOne({_id:req.body._id}, () => {}),
                     //删除用户发布的文章
                     task.deleteMany({author:req.body._id}, () => {}),
-                    //删除文章的评论
-                    task.updateMany({receiver:req.body._id},{$pull:{receiver:req.body._id}})
+                    //删除文章的评论/任务
+                    task.updateMany({"receiver.user":req.body._id},{$pull:{"receiver":{user:req.body._id}}}, (err,data) => {
+
+                    })
             ]).then()
         }
     })
