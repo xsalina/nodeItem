@@ -120,8 +120,11 @@ router.post('/detail/:id', (req, res) => {
     ])
 });
 router.post('/task/finmsg', (req, res) => {
+    console.log(req.body.taskid);
+    var _id = req.body.taskid.slice(8)
+    //console.log(req.body.taskid,_id)
     task.updateOne(
-        {_id:'jjj'},
+        {_id},
         {$set:{
             ['receiver.'+req.body.index + '.msg']:req.body.con},
             ['receiver.'+req.body.index + '.finmsg']:true

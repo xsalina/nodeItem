@@ -42,7 +42,7 @@
         <div class="layui-card">
             <div class="layui-card-header">用户名:<%- data.receiver[i].user.username %></div>
             <% if(data.receiver[i].finmsg){ %>
-                <div class="layui-card-body"><%- data.receiver[i].msg %></div>
+                <div class="layui-card-body">评论:<%- data.receiver[i].msg %></div>
             <% }else{ %>
                 <% if(user && user._id == data.receiver[i].user._id){ %>
                     <form class="layui-form " action="">
